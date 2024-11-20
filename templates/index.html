@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flask Calculator</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Custom Animations */
+        .hover-scale:hover {
+            transform: scale(1.1);
+            transition: transform 0.2s;
+        }
+
+        /* Smooth display update */
+        #display {
+            transition: all 0.3s ease;
+        }
+
+        .fade-in {
+            animation: fadeIn 0.5s;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        /* Background image */
+        body {
+            background-image: url('https://cdn.pixabay.com/photo/2014/07/06/13/55/calculator-385506_1280.jpg');
+            background-size: cover;
+            background-position: center;
+            display: flex; /* Flexbox for centering */
+            justify-content: center; /* Horizontally center the content */
+            align-items: center; /* Vertically center the content */
+            height: 100vh; /* Ensure full viewport height */
+            margin: 0;
+        }
+
+        /* Background overlay */
+        .overlay {
+            background: rgba(255, 255, 255, 0.8);
+        }
+
+        /* Center the calculator */
+        .calc-container {
+            width: 70%;
+            max-width: 600px; /* Added max-width for better centering */
+            margin: auto; /* Center the container */
+        }
+
+        /* Custom styles for the background image section */
+        .background-section {
+            height: 300px;
+            background-position: center;
+            background-size: cover;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body class="bg-gray-100">
+    
+    <!-- Background image section -->
+    <div class="background-section w-full" style="background-image: url('https://source.unsplash.com/1600x900/?tech');"></div>
+
+    <div class="bg-white rounded-lg shadow-lg p-8 overlay calc-container">
+        <h1 class="text-center text-3xl font-bold mb-6 text-gray-800">Simple & Scientific Calculator</h1>
+
+        <div id="display" class="bg-gray-200 overflow-hidden text-right p-4 rounded text-3xl mb-4 font-mono">0</div>
+        
+        <div class="grid grid-cols-6 gap-4">
+
+            <!-- First row of buttons -->
+            <button class="bg-red-400 hover-scale p-4 rounded text-xl text-white" onclick="clearDisplay()">C</button>
+            <button class="bg-yellow-400 hover-scale p-4 rounded text-xl" onclick="deleteLast()">DEL</button>
+            <button class="bg-indigo-400 hover-scale p-4 rounded text-xl text-white" onclick="appendToDisplay('(')">(</button>
+            <button class="bg-indigo-400 hover-scale p-4 rounded text-xl text-white" onclick="appendToDisplay(')')">)</button>
+            <button class="bg-indigo-400 hover-scale p-4 rounded text-xl text-white" onclick="appendToDisplay('%')">%</button>
+            <button class="bg-indigo-400 hover-scale p-4 rounded text-xl text-white" onclick="appendToDisplay('/')">/</button>
+
+            <!-- Second row of buttons -->
+            <button class="bg-gray-300 hover-scale p-4 rounded text-xl" onclick="appendToDisplay('7')">7</button>
+            <button class="bg-gray-300 hover-scale p-4 rounded text-xl" onclick="appendToDisplay('8')">8</button>
+            <button class="bg-gray-300 hover-scale p-4 rounded text-xl" onclick="appendToDisplay('9')">9</button>
+            <button class="bg-indigo-400 hover-scale p-4 rounded text-xl text-white" onclick="appendToDisplay('*')">*</button>
+            <button class="bg-gray-300 hover-scale p-4 rounded text-xl" onclick="appendToDisplay('sin(')">sin</button>
+            <button class="bg-gray-300 hover-scale p-4 rounded text-xl" onclick="appendToDisplay('cos(')">cos</button>
+
+            <!-- Third row of buttons -->
+            <button class="bg-gray-300 hover-scale p-4 rounded text-xl" onclick="appendToDisplay('4')">4</button>
+            <button class="bg-gray-300 hover-scale p-4 rounded text-xl" onclick="appendToDisplay('5')">5</button>
+            <button class="bg-gray-300 hover-scale p-4 rounded text-xl" onclick="appendToDisplay('6')">6</button>
+            <button class="bg-indigo-400 hover-scale p-4 rounded text-xl text-white" onclick="appendToDisplay('-')">-</button>
+            <button class="bg-gray-300 hover-scale p-4 rounded text-xl" onclick="appendToDisplay('tan(')">tan</button>
+            <button class="bg-gray-300 hover-scale p-4 rounded text-xl" onclick="appendToDisplay('log(')">log</button>
+
+            <!-- Fourth row of buttons -->
+            <button class="bg-gray-300 hover-scale p-4 rounded text-xl" onclick="appendToDisplay('1')">1</button>
+            <button class="bg-gray-300 hover-scale p-4 rounded text-xl" onclick="appendToDisplay('2')">2</button>
+            <button class="bg-gray-300 hover-scale p-4 rounded text-xl" onclick="appendToDisplay('3')">3</button>
+            <button class="bg-indigo-400 hover-scale p-4 rounded text-xl text-white" onclick="appendToDisplay('+')">+</button>
+            <button class="bg-gray-300 hover-scale p-4 rounded text-xl" onclick="appendToDisplay('sqrt(')">√</button>
+            <button class="bg-gray-300 hover-scale p-4 rounded text-xl" onclick="appendToDisplay('pi')">π</button>
+
+            <!-- Fifth row of buttons -->
+            <button class="bg-gray-300 hover-scale p-4 rounded text-xl col-span-2" onclick="appendToDisplay('0')">0</button>
+            <button class="bg-gray-300 hover-scale p-4 rounded text-xl" onclick="appendToDisplay('.')">.</button>
+            <button class="bg-blue-500 hover-scale p-4 rounded text-xl text-white " onclick="calculate()">=</button> <!-- Wider equal button -->
+            <button class="bg-green-400 hover-scale p-4 rounded text-xl text-white" onclick="appendToDisplay('**2')">x<sup>2</sup></button> <!-- Square button -->
+            <button class="bg-green-400 hover-scale p-4 rounded text-xl text-white" onclick="appendToDisplay('**3')">x<sup>3</sup></button> <!-- Square button -->
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+
+<script>    
+    let display = document.getElementById('display');
+
+    // Clear display to zero
+    function clearDisplay() {
+        display.innerText = '0';
+        display.classList.add('fade-in');
+    }
+
+    // Delete the last character
+    function deleteLast() {
+        if (display.innerText.length === 1) {
+            display.innerText = '0';
+        } else {
+            display.innerText = display.innerText.slice(0, -1);
+        }
+        display.classList.add('fade-in');
+    }
+
+    // Append characters to the display
+    function appendToDisplay(value) {
+        if (display.innerText === '0') {
+            display.innerText = value;
+        } else {
+            display.innerText += value;
+        }
+        display.classList.add('fade-in');
+    }
+
+    // Perform the calculation
+    function calculate() {
+        const expression = display.innerText;
+
+        fetch('/calculate', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ expression: expression }),
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.result !== undefined) {
+                display.innerText = data.result;
+            } else {
+                display.innerText = 'Error';
+            }
+            display.classList.add('fade-in');
+        })
+        .catch(() => {
+            display.innerText = 'Error';
+            display.classList.add('fade-in');
+        });
+    }
+
+    // Keyboard interaction
+    document.addEventListener('keydown', function(event) {
+        const key = event.key;
+
+        // Check for valid keys and call respective functions
+        if (key === 'Backspace') {
+            deleteLast();
+        } else if (key === 'Escape') {
+            clearDisplay();
+        } else if (key === 'Enter') {
+            calculate();
+        } else if ('0123456789+-*/.%()'.includes(key)) {
+            appendToDisplay(key);
+        }
+    });
+</script>
+</html>
